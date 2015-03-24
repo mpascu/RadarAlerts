@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="intervalEntries">
+        <item>300ms</item>
+        <item>1000ms</item>
+        <item>2000ms</item>
+        <item>3000ms</item>
+    </string-array>
+    <string-array name="intervalValues" >
+        <item>300</item>
+        <item>1000</item>
+        <item>2000</item>
+        <item>3000</item>
+    </string-array>
+    <string-array name="speech_languages">
+        <item>English</item>
+        <item>Spanish</item>
+    </string-array>
+    <string-array name="speech_values" >
+        <item>English</item>
+        <item>Spanish</item>
+    </string-array>
+</resources>

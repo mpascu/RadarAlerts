@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="Connection preferences">
+
+        <ListPreference
+            android:key="refresh_interval"
+            android:title="Refresh interval"
+            android:summary="Enter the refreshing interval"
+            android:entries="@array/intervalEntries"
+            android:entryValues="@array/intervalValues" />
+
+
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="Notifications">
+
+        <CheckBoxPreference
+            android:key="voice_notifications"
+            android:title="Voice notifications "
+            android:summary="Activate voice notifications" />
+        <CheckBoxPreference
+            android:key="push_notifications"
+            android:title="Push notifications "
+            android:summary="Activate push notifications" />
+        <CheckBoxPreference
+            android:key="email_notifications"
+            android:title="email notifications "
+            android:summary="Activate email notifications" />
+
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="Voice preferences">
+
+        <CheckBoxPreference
+            android:key="voice_commands"
+            android:title="Voice commands "
+            android:summary="Activate voice commands" />
+
+        <ListPreference
+            android:key="speech_language"
+            android:title="Voice commands language"
+            android:summary="Enter the desired language"
+            android:entries="@array/speech_languages"
+            android:entryValues="@array/speech_values" />
+    </PreferenceCategory>
+
+</PreferenceScreen>
