@@ -1,10 +1,15 @@
 package com.example.marc.radaralert;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
@@ -14,8 +19,11 @@ import java.util.Observable;
 
 
 public class MainActivity extends ActionBarActivity {
+
     private ObservableSwitchChangeListener listener;
     public static FragmentManager fragmentManager;
+    private String regId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,8 +32,23 @@ public class MainActivity extends ActionBarActivity {
         listener = new ObservableSwitchChangeListener();
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
         viewPager.setAdapter(new SwipeTabsPagerAdapter(getSupportFragmentManager(), listener));
+        regId = getRegistrationId(this);
+        if (regId.equals("")) {
+            Intent intent = new Intent(this, LogInActivity.class);
+            startActivityForResult(intent, 1);
+        }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+            boolean registered = data.getBooleanExtra("Registered", false);
+            if (!registered) {
+                finish();
+            }
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -62,4 +85,27 @@ public class MainActivity extends ActionBarActivity {
             notifyObservers(isChecked);
         }
     }
+
+    private String getRegistrationId(Context context) {
+        final SharedPreferences prefs = getGcmPreferences(context);
+        String registrationId = prefs.getString(Globals.PREFS_PROPERTY_REG_ID, "");
+        if (registrationId == null || registrationId.equals(""))
+        {
+            Log.i(Globals.TAG, "Registration not found.");
+            return "";
+        }
+        int registeredVersion = prefs.getInt(Globals.PROPERTY_APP_VERSION, Integer.MIN_VALUE);
+        int currentVersion = Globals.getAppVersion(context);
+        if (registeredVersion != currentVersion)
+        {
+            Log.i(Globals.TAG, "App version changed.");
+            return "";
+        }
+        return registrationId;
+    }
+
+    private SharedPreferences getGcmPreferences(Context context) {
+        return getSharedPreferences(Globals.PREFS_NAME, Context.MODE_PRIVATE);
+    }
+
 }
