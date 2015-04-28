@@ -17,8 +17,6 @@ public class RegistrationRecord {
     @Index
     private String regId;
 
-    Key<UserRecord> user;
-
     public RegistrationRecord() {
     }
 
@@ -29,13 +27,5 @@ public class RegistrationRecord {
 
     public void setRegId(String regId) {
         this.regId = regId;
-    }
-
-    public Key<UserRecord> getUser() {
-        return user;
-    }
-
-    public void setUser(Key<UserRecord> user) {
-        this.user = user;
     }
 }

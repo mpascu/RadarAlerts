@@ -49,7 +49,11 @@ public class LogInEndpoint {
         record.setUser(username);
         record.setPassword(password);
         ofy().save().entity(record).now();
-        sendResponse(true, redId);
+        try {
+            sendResponse(true, redId);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void sendResponse(@Named("message") Boolean response, String regId) throws IOException {
@@ -57,10 +61,10 @@ public class LogInEndpoint {
         message = response? "OK" : "KO";
         Sender sender = new Sender(API_KEY);
         Message msg = new Message.Builder().addData("response", message).build();
-        List<RegistrationRecord> records = ofy().load().type(RegistrationRecord.class).limit(10).list();
-            Result result = sender.send(msg, record.getRegId(), 5);
+        RegistrationRecord record = ofy().load().type(RegistrationRecord.class).id(regId).now();
+            Result result = sender.send(msg, regId, 5);
             if (result.getMessageId() != null) {
-                log.info("Message sent to " + record.getRegId());
+                log.info("Message sent to " + regId);
                 String canonicalRegId = result.getCanonicalRegistrationId();
                 if (canonicalRegId != null) {
                     // if the regId changed, we have to update the datastore
