@@ -52,6 +52,15 @@
             android:name=".LogInActivity"
             android:label="@string/title_activity_log_in" >
         </activity>
+
+        <receiver android:name=".GcmBroadcastReceiver" android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="com.example.marc.radaralert" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

@@ -11,7 +11,7 @@ public class Globals
 {
     public static final String TAG = "GCM DEMO";
 
-    public static final String GCM_SENDER_ID = "1046079129243";
+    public static final String GCM_SENDER_ID = "424345632408";
     // id-2210
     // 650116039430
 
@@ -20,7 +20,7 @@ public class Globals
 
     public static final long GCM_TIME_TO_LIVE = 60L * 60L * 24L * 7L * 4L; // 4 Weeks
 
-    public static final String PROPERTY_APP_VERSION = "appVersion";
+    public static final String PROPERTY_APP_VERSION = "1";
 
     public static int getAppVersion(Context context) {
         try

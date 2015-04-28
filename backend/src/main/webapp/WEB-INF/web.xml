@@ -14,7 +14,7 @@
         <init-param>
             <param-name>services</param-name>
             <param-value>com.example.eduard.myapplication.backend.RegistrationEndpoint,
-                com.example.eduard.myapplication.backend.MessagingEndpoint
+                com.example.eduard.myapplication.backend.LogInEndpoint
             </param-value>
         </init-param>
     </servlet>

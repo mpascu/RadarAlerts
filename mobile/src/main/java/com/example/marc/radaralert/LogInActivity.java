@@ -26,6 +26,7 @@ public class LogInActivity extends ActionBarActivity {
     EditText usernameText;
     EditText passwordText;
     AtomicInteger msgId = new AtomicInteger();
+    private Boolean registered = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +35,7 @@ public class LogInActivity extends ActionBarActivity {
         gcm = GoogleCloudMessaging.getInstance(this);
         usernameText = (EditText) findViewById(R.id.username);
         passwordText = (EditText) findViewById(R.id.password);
+        registerInBackground();
     }
 
 
@@ -60,7 +62,27 @@ public class LogInActivity extends ActionBarActivity {
     }
 
     public void register(View v) {
+        new AsyncTask<String, String, String>() {
 
+            @Override
+            protected String doInBackground(String... params) {
+                String msg = "";
+                try {
+                    Bundle data = new Bundle();
+                    data.putString("username", params[0]);
+                    data.putString("password", params[1]);
+                    data.putString("regID", params[2]);
+                    data.putString("my_action",
+                            "com.google.android.gcm.demo.app.LOGIN");
+                    String id = Integer.toString(msgId.incrementAndGet());
+                    gcm.send(Globals.GCM_SENDER_ID + "@gcm.googleapis.com", id, data);
+                    msg = "Sent message";
+                } catch (IOException ex) {
+                    msg = "Error :" + ex.getMessage();
+                }
+                return msg;
+            }
+        }.execute(usernameText.getText().toString(), passwordText.getText().toString(), regid);
     }
 
     public void logIn(View v) {
@@ -68,10 +90,10 @@ public class LogInActivity extends ActionBarActivity {
     }
 
     private void registerInBackground() {
-        new AsyncTask<Void, Void, String>()
+        new AsyncTask<String, String, String>()
         {
             @Override
-            protected String doInBackground(Void... params)
+            protected String doInBackground(String... params)
             {
                 String msg = "";
                 try
@@ -108,7 +130,7 @@ public class LogInActivity extends ActionBarActivity {
                 super.onPostExecute(s);
             }
 
-        }.execute(null, null, null);
+        }.execute();
     }
 
     private void sendRegistrationIdToBackend()
@@ -123,8 +145,6 @@ public class LogInActivity extends ActionBarActivity {
                 try
                 {
                     Bundle data = new Bundle();
-                    data.putString("username", params[0]);
-                    data.putString("password", params[1]);
                     data.putString("action", "backend.eps.udl.hellobackendcomplet.gcmdemo.REGISTER");
                     String id = Integer.toString(msgId.incrementAndGet());
                     gcm.send(Globals.GCM_SENDER_ID + "@gcm.googleapis.com", id, Globals.GCM_TIME_TO_LIVE, data);
@@ -142,7 +162,7 @@ public class LogInActivity extends ActionBarActivity {
             {
                 Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
             }
-        }.execute(usernameText.getText().toString(), passwordText.getText().toString());
+        }.execute();
     }
 
     private void storeRegistrationId(Context context, String regId)
@@ -150,7 +170,7 @@ public class LogInActivity extends ActionBarActivity {
         final SharedPreferences prefs = getSharedPreferences(
                 Globals.PREFS_NAME, Context.MODE_PRIVATE);
         int appVersion = Globals.getAppVersion(context);
-        Log.i(Globals.TAG, "Saving regId on app version " + appVersion);
+        Log.i(Globals.TAG, "Saving regId: " + regId + ", on app version " + appVersion);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(Globals.PREFS_PROPERTY_REG_ID, regId);
         editor.putInt(Globals.PROPERTY_APP_VERSION, appVersion);

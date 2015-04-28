@@ -18,6 +18,8 @@ public class UserRecord {
     private String user;
     private String password;
 
+    @Index Key<RegistrationRecord> registrations;
+
     @Index Key<AlertRecord> alerts;
 
 
@@ -38,5 +40,21 @@ public class UserRecord {
 
     public void setUser(String user) {
         this.user = user;
+    }
+
+    public Key<RegistrationRecord> getRegistrations() {
+        return registrations;
+    }
+
+    public void setRegistrations(Key<RegistrationRecord> registrations) {
+        this.registrations = registrations;
+    }
+
+    public Key<AlertRecord> getAlerts() {
+        return alerts;
+    }
+
+    public void setAlerts(Key<AlertRecord> alerts) {
+        this.alerts = alerts;
     }
 }

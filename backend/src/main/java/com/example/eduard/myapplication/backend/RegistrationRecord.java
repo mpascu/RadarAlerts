@@ -24,9 +24,18 @@ public class RegistrationRecord {
 
     public String getRegId() {
         return regId;
+
     }
 
     public void setRegId(String regId) {
         this.regId = regId;
+    }
+
+    public Key<UserRecord> getUser() {
+        return user;
+    }
+
+    public void setUser(Key<UserRecord> user) {
+        this.user = user;
     }
 }
