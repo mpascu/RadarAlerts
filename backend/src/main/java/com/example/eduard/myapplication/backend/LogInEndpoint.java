@@ -6,16 +6,10 @@
 
 package com.example.eduard.myapplication.backend;
 
-import com.google.android.gcm.server.Constants;
-import com.google.android.gcm.server.Message;
-import com.google.android.gcm.server.Result;
-import com.google.android.gcm.server.Sender;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
 
-import java.io.IOException;
-import java.util.List;
 import java.util.logging.Logger;
 
 import javax.inject.Named;
@@ -42,46 +36,36 @@ public class LogInEndpoint {
     private static final String API_KEY = System.getProperty("gcm.api.key");
 
     @ApiMethod(name = "login")
-    public void registerDevice(@Named("username") String username,
+    public Result login(@Named("username") String username,
                                @Named("password") String password,
                                @Named("regID") String redId) {
         UserRecord record = new UserRecord();
         record.setUser(username);
         record.setPassword(password);
-        ofy().save().entity(record).now();
-        try {
-            sendResponse(true, redId);
-        } catch (IOException e) {
-            e.printStackTrace();
+        UserRecord user = ofy().load().type(UserRecord.class).filter("username", username).first().now();
+        if (user == null) {
+            return new Result(false, "KO");
+        } else if (user.getPassword().equals(password)) {
+            return new Result(true, "OK");
+        } else {
+            return new Result(false, "KO");
         }
     }
 
-    private void sendResponse(@Named("message") Boolean response, String regId) throws IOException {
-        String message;
-        message = response? "OK" : "KO";
-        Sender sender = new Sender(API_KEY);
-        Message msg = new Message.Builder().addData("response", message).build();
-        RegistrationRecord record = ofy().load().type(RegistrationRecord.class).id(regId).now();
-            Result result = sender.send(msg, regId, 5);
-            if (result.getMessageId() != null) {
-                log.info("Message sent to " + regId);
-                String canonicalRegId = result.getCanonicalRegistrationId();
-                if (canonicalRegId != null) {
-                    // if the regId changed, we have to update the datastore
-                    log.info("Registration Id changed for " + record.getRegId() + " updating to " + canonicalRegId);
-                    record.setRegId(canonicalRegId);
-                    ofy().save().entity(record).now();
-                }
-            } else {
-                String error = result.getErrorCodeName();
-                if (error.equals(Constants.ERROR_NOT_REGISTERED)) {
-                    log.warning("Registration Id " + record.getRegId() + " no longer registered with GCM, removing from datastore");
-                    // if the device is no longer registered with Gcm, remove it from the datastore
-                    ofy().delete().entity(record).now();
-                } else {
-                    log.warning("Error when sending message : " + error);
-                }
-            }
+    @ApiMethod(name = "register")
+    public Result register(@Named("username") String username,
+                               @Named("password") String password,
+                               @Named("regID") String redId) {
+        UserRecord user = ofy().load().type(UserRecord.class).filter("username", username).first().now();
+        if (user != null) {
+            UserRecord record = new UserRecord();
+            record.setUser(username);
+            record.setPassword(password);
+            ofy().save().entity(record).now();
+            return new Result(true, "OK");
+        } else {
+            return new Result(false, "KO");
+        }
     }
 
 }
