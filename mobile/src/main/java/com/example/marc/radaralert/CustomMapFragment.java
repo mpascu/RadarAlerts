@@ -5,15 +5,24 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import com.example.marc.myapplication.backend.submitAlert.SubmitAlert;
+import com.example.marc.myapplication.backend.submitAlert.model.AlertRecord;
+import com.example.marc.myapplication.backend.submitAlert.model.CollectionResponseAlertRecord;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+
+import java.io.IOException;
 
 public class CustomMapFragment extends com.google.android.gms.maps.SupportMapFragment implements android.location.LocationListener{
 
@@ -31,7 +40,6 @@ public class CustomMapFragment extends com.google.android.gms.maps.SupportMapFra
         googleMap = getMap();
         googleMap.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
         googleMap.setMyLocationEnabled(true);
-
         googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
 
             @Override
@@ -46,6 +54,7 @@ public class CustomMapFragment extends com.google.android.gms.maps.SupportMapFra
                         .setPositiveButton("Add", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 googleMap.addMarker(new MarkerOptions().position(latLng));
+                                sendAlertToBackend(input.getText().toString(), latLng.latitude, latLng.longitude);
                             }
                         }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
@@ -55,7 +64,9 @@ public class CustomMapFragment extends com.google.android.gms.maps.SupportMapFra
 
             }
         });
-    }
+        getAlertsFromBackend();
+
+}
 
     @Override
     public void onLocationChanged(Location location) {
@@ -80,5 +91,81 @@ public class CustomMapFragment extends com.google.android.gms.maps.SupportMapFra
     @Override
     public void onProviderDisabled(String provider) {
 
+    }
+
+    private void getAlertsFromBackend()
+    {
+        if(Globals.regid == null || Globals.regid.equals("")){
+            Toast.makeText(getActivity(), "You must register first", Toast.LENGTH_LONG).show();
+            return;
+        }
+        new AsyncTask<String, Void, String>(){
+            @Override
+            protected String doInBackground(String... params){
+                String msg = "";
+                try{
+
+                    SubmitAlert.Builder builder = new SubmitAlert.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
+                            .setRootUrl("https://crafty-shelter-88814.appspot.com/_ah/api/");
+
+                    SubmitAlert as = builder.build();
+                    CollectionResponseAlertRecord crar=as.listAlerts(100).execute();
+                    Globals.alertList =crar.getItems();
+                    msg = "Alertes rebudes correctament";
+                }
+                catch (IOException ex)
+                {
+                    msg = "Error :" + ex.getMessage();
+                }
+                return msg;
+            }
+
+            @Override
+            protected void onPostExecute(String msg)
+            {
+                for (AlertRecord ar : Globals.alertList){
+                    //System.out.println("LAT:"+ ar.getLat()+"LON:"+ar.getLng());
+                    LatLng pos= new LatLng(ar.getLat(),ar.getLng());
+                    System.out.println(pos.toString());
+                    MarkerOptions marker =new MarkerOptions().position(pos);
+                    googleMap.addMarker(marker);
+                }
+                Toast.makeText(getActivity().getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+            }
+        }.execute();
+    }
+
+    private void sendAlertToBackend(String message, final Double latitude, final Double longitude)
+    {
+        if(Globals.regid == null || Globals.regid.equals("")){
+            Toast.makeText(getActivity(), "You must register first", Toast.LENGTH_LONG).show();
+            return;
+        }
+        new AsyncTask<String, Void, String>(){
+            @Override
+            protected String doInBackground(String... params){
+                String msg = "";
+                try{
+
+                    SubmitAlert.Builder builder = new SubmitAlert.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
+                            .setRootUrl("https://crafty-shelter-88814.appspot.com/_ah/api/");
+
+                    SubmitAlert as = builder.build();
+                    as.addAlert(params[0],latitude,longitude).execute();
+                    msg = "Alerta enviada";
+                }
+                catch (IOException ex)
+                {
+                    msg = "Error :" + ex.getMessage();
+                }
+                return msg;
+            }
+
+            @Override
+            protected void onPostExecute(String msg)
+            {
+                Toast.makeText(getActivity().getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+            }
+        }.execute(message);
     }
 }
