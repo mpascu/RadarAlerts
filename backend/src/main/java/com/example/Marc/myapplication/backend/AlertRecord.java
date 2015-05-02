@@ -17,8 +17,11 @@ public class AlertRecord {
     private String alertId;
     private Double lat;
     private Double lng;
+    private String regId;
+    private String description;
 
     public AlertRecord() {
+
     }
 
     public String getAlertId() {
@@ -38,5 +41,21 @@ public class AlertRecord {
     }
     public Double getLng(){
         return this.lng;
+    }
+
+    public void setRegId(String regId) {
+        this.regId=regId;
+    }
+
+    public String getRegId() {
+        return regId;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }

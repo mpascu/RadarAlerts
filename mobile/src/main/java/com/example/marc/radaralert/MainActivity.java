@@ -54,13 +54,15 @@ public class MainActivity extends ActionBarActivity {
         gcm = GoogleCloudMessaging.getInstance(this);
         context = getApplicationContext();
         Globals.regid = getRegistrationId(context);
-
+        if (Globals.regid==null || Globals.regid==""){
+            registerInBackground();
+        }
         setContentView(R.layout.activity_main);
         fragmentManager = getSupportFragmentManager();
         listener = new ObservableSwitchChangeListener();
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
         viewPager.setAdapter(new SwipeTabsPagerAdapter(getSupportFragmentManager(), listener));
-        registerInBackground();
+        Globals.instance.getAlertsFromBackend();
     }
 
 
@@ -157,7 +159,7 @@ public class MainActivity extends ActionBarActivity {
                     // The request to your server should be authenticated if your app
                     // is using accounts.
                     regService.register(regId).execute();
-
+                    storeRegistrationId(getApplicationContext(),regId);
                 } catch (IOException ex) {
                     ex.printStackTrace();
                     msg = "Error: " + ex.getMessage();

@@ -1,31 +1,85 @@
 package com.example.marc.radaralert;
 
 import android.app.ListFragment;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.marc.myapplication.backend.submitAlert.SubmitAlert;
+import com.example.marc.myapplication.backend.submitAlert.model.AlertRecord;
+import com.example.marc.myapplication.backend.submitAlert.model.CollectionResponseAlertRecord;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+
+import java.io.IOException;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.Timer;
+import java.util.TimerTask;
+
 
 /**
  * Created by Marc on 19/03/2015.
  */
-public class AlertsListFrag extends android.support.v4.app.ListFragment {
-
+public class AlertsListFrag extends android.support.v4.app.ListFragment implements Observer {
+    private String[] titols ={};
+    private String[] desciptions ={};
+    private AlertArrayAdapter<String> adapter;
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        String[] values = new String[] { "Radar1", "Radar2", "Alerta1",
-                "Alerta2" };
-        String[] desciptions = new String[] { "", "", "Camió volcat",
-                "Retencions per obres" };
-        AlertArrayAdapter<String> adapter = new AlertArrayAdapter<String>(getActivity(),
-                R.layout.alert_list_item, values, desciptions);
+
+        adapter = new AlertArrayAdapter<String>(getActivity(),
+                R.layout.alert_list_item, titols, desciptions);
         setListAdapter(adapter);
+        Globals.instance.addObserver(this);
     }
 
     @Override
+    public void update(Observable observable, Object data) {
+        if (Globals.instance.getAlertList()!=null){
+            int x = 0;
+            int count=0;
+            for (AlertRecord alert: Globals.instance.getAlertList()){
+                if(alert.getRegId().equals(Globals.regid)){
+                    count++;
+                }
+            }
+            titols=new String[count];
+            desciptions=new String[count];
+            for (AlertRecord alert: Globals.instance.getAlertList()){
+                //System.out.println("aaaaaaaaaaaaaa");
+                if(alert.getRegId().equals(Globals.regid)){
+                    //System.out.println("bbbbbbbbbbb");
+                    titols[x]="Radar";
+                    desciptions[x]=alert.getDescription();
+                    x++;
+
+                }
+            }
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    adapter = new AlertArrayAdapter<String>(getActivity(),R.layout.alert_list_item, titols, desciptions);
+                    setListAdapter(adapter);
+                }
+            });
+        }
+
+    }
+
+
+    @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        // do something with the data
+
     }
 
 }

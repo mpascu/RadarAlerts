@@ -2,12 +2,21 @@ package com.example.marc.radaralert;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.marc.myapplication.backend.submitAlert.SubmitAlert;
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+
+import java.io.IOException;
 
 /**
  * Created by Marc on 19/03/2015.
@@ -28,7 +37,7 @@ public class AlertArrayAdapter<T> extends ArrayAdapter{
         this.descriptions=desciptions;
     }
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, final View convertView, ViewGroup parent) {
         View row = convertView;
         AlertHolder holder = null;
 
@@ -50,10 +59,20 @@ public class AlertArrayAdapter<T> extends ArrayAdapter{
 
         String title = data[position];
         holder.title.setText(title);
-        String secondLine = descriptions[position];
+        final String secondLine = descriptions[position];
         holder.description.setText(secondLine);
         //holder.imgIcon.setImageResource(weather.icon);
-
+        ImageButton deleteButton = (ImageButton)row.findViewById(R.id.deleteImageButton);
+        final View finalRow = row;
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TextView tv = (TextView) convertView.findViewById(R.id.secondLine);
+                final TextView tv=(TextView) finalRow.findViewById(R.id.secondLine);
+                deleteAlert(tv.getText().toString());
+                //System.out.println(tv.getText());
+            }
+        });
         return row;
     }
 
@@ -61,6 +80,34 @@ public class AlertArrayAdapter<T> extends ArrayAdapter{
     {
         TextView title;
         TextView description;
+    }
+
+    private void deleteAlert(String name){
+        new AsyncTask<String, Void, String>(){
+            @Override
+            protected String doInBackground(String... params){
+                String msg = "";
+                try{
+
+                    SubmitAlert.Builder builder = new SubmitAlert.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
+                            .setRootUrl("https://crafty-shelter-88814.appspot.com/_ah/api/");
+                    builder.setApplicationName(getContext().getPackageName());
+                    SubmitAlert as = builder.build();
+                    System.out.println(params[0]);
+                    as.deleteAlert(params[0]).execute();
+                    msg = "Alerta eliminada correctament";
+                }
+                catch (IOException ex){
+                    msg = "Error :" + ex.getMessage();
+                }
+                return msg;
+            }
+
+            @Override
+            protected void onPostExecute(String msg) {
+///////////////////////////////////
+            }
+        }.execute(name);
     }
 
 }

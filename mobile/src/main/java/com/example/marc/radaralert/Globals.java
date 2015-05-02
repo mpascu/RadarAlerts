@@ -3,15 +3,30 @@ package com.example.marc.radaralert;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
+import android.widget.Toast;
 
 
+import com.example.marc.myapplication.backend.submitAlert.SubmitAlert;
+import com.example.marc.myapplication.backend.submitAlert.model.AlertRecord;
+import com.example.marc.myapplication.backend.submitAlert.model.CollectionResponseAlertRecord;
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+
+import java.io.IOException;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Created by Montse on 18/03/2015.
  */
-public class Globals
-{
+public class Globals extends Observable{
+
+    public static Globals instance = new Globals();
+    private Globals (){
+
+    }
     public static final String TAG = "GCM DEMO";
 
     public static final String GCM_SENDER_ID = "188957038907";
@@ -24,7 +39,16 @@ public class Globals
     public static final long GCM_TIME_TO_LIVE = 60L * 60L * 24L * 7L * 4L; // 4 Weeks
 
     public static final String PROPERTY_APP_VERSION = "1";
-    public static List<com.example.marc.myapplication.backend.submitAlert.model.AlertRecord> alertList;
+    private static List<AlertRecord> alertList;
+
+    public List<AlertRecord> getAlertList(){
+        return alertList;
+    }
+    public void setAlertList(List<AlertRecord>list){
+        alertList=list;
+        setChanged();
+        notifyObservers();
+    }
 
     public static int getAppVersion(Context context) {
         try
@@ -36,5 +60,44 @@ public class Globals
         {
             throw new RuntimeException("Could not get package name: " + e);
         }
+    }
+
+    public void getAlertsFromBackend(){
+        if(Globals.regid == null || Globals.regid.equals("")){
+            //Toast.makeText(getApplicationContext(), "You must register first", Toast.LENGTH_LONG).show();
+            return;
+        }
+        new AsyncTask<String, Void, String>(){
+            @Override
+            protected String doInBackground(String... params){
+                String msg = "";
+                try{
+
+                    SubmitAlert.Builder builder = new SubmitAlert.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
+                            .setRootUrl("https://crafty-shelter-88814.appspot.com/_ah/api/");
+
+                    SubmitAlert as = builder.build();
+                    CollectionResponseAlertRecord crar=as.listAlerts(100).execute();
+                    setAlertList(crar.getItems());
+                    msg = "Alertes rebudes correctament";
+                }
+                catch (IOException ex)
+                {
+                    msg = "Error :" + ex.getMessage();
+                }
+                return msg;
+            }
+
+            @Override
+            protected void onPostExecute(String msg) {
+                if(Globals.instance.getAlertList()!=null){
+
+                }
+                else{
+                    msg = "El servidor no ha retornat cap alerta";
+                }
+                //Toast.makeText(getApp, msg, Toast.LENGTH_SHORT).show();
+            }
+        }.execute();
     }
 }

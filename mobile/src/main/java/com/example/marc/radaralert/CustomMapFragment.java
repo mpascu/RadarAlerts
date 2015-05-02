@@ -23,8 +23,10 @@ import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 
 import java.io.IOException;
+import java.util.Observable;
+import java.util.Observer;
 
-public class CustomMapFragment extends com.google.android.gms.maps.SupportMapFragment implements android.location.LocationListener{
+public class CustomMapFragment extends com.google.android.gms.maps.SupportMapFragment implements android.location.LocationListener,Observer{
 
     private static final long MIN_TIME = 400;
     private static final float MIN_DISTANCE = 1000;
@@ -64,7 +66,8 @@ public class CustomMapFragment extends com.google.android.gms.maps.SupportMapFra
 
             }
         });
-        getAlertsFromBackend();
+        Globals.instance.addObserver(this);
+        updateAlerts();
 
 }
 
@@ -75,7 +78,22 @@ public class CustomMapFragment extends com.google.android.gms.maps.SupportMapFra
         //googleMap.addMarker(new MarkerOptions().position(latLng).title("Posicio actual"));
 
         googleMap.animateCamera(cameraUpdate);
-        //locationManager.removeUpdates(this);
+
+        for (AlertRecord alert :Globals.instance.getAlertList()){
+            Location radarLocation = new Location("radar");
+            radarLocation.setLatitude(alert.getLat());
+            radarLocation.setLongitude(alert.getLng());
+            if(radarLocation.distanceTo(location)<100){
+                nearRadarAlarm();
+            }
+        }
+    }
+
+    private void nearRadarAlarm() {
+        /////////////////
+        /////////////
+        //////////////////
+        //////////////////
     }
 
     @Override
@@ -93,48 +111,19 @@ public class CustomMapFragment extends com.google.android.gms.maps.SupportMapFra
 
     }
 
-    private void getAlertsFromBackend()
-    {
-        if(Globals.regid == null || Globals.regid.equals("")){
-            Toast.makeText(getActivity(), "You must register first", Toast.LENGTH_LONG).show();
-            return;
+    private void updateAlerts(){
+        if(Globals.instance.getAlertList()!=null){
+            googleMap.clear();
+            for (AlertRecord ar : Globals.instance.getAlertList()){
+                //System.out.println("LAT:"+ ar.getLat()+"LON:"+ar.getLng());
+
+                LatLng pos= new LatLng(ar.getLat(),ar.getLng());
+                System.out.println(pos.toString());
+                MarkerOptions marker =new MarkerOptions().position(pos);
+                googleMap.addMarker(marker);
+            }
         }
-        new AsyncTask<String, Void, String>(){
-            @Override
-            protected String doInBackground(String... params){
-                String msg = "";
-                try{
-
-                    SubmitAlert.Builder builder = new SubmitAlert.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
-                            .setRootUrl("https://crafty-shelter-88814.appspot.com/_ah/api/");
-
-                    SubmitAlert as = builder.build();
-                    CollectionResponseAlertRecord crar=as.listAlerts(100).execute();
-                    Globals.alertList =crar.getItems();
-                    msg = "Alertes rebudes correctament";
-                }
-                catch (IOException ex)
-                {
-                    msg = "Error :" + ex.getMessage();
-                }
-                return msg;
-            }
-
-            @Override
-            protected void onPostExecute(String msg)
-            {
-                for (AlertRecord ar : Globals.alertList){
-                    //System.out.println("LAT:"+ ar.getLat()+"LON:"+ar.getLng());
-                    LatLng pos= new LatLng(ar.getLat(),ar.getLng());
-                    System.out.println(pos.toString());
-                    MarkerOptions marker =new MarkerOptions().position(pos);
-                    googleMap.addMarker(marker);
-                }
-                Toast.makeText(getActivity().getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
-            }
-        }.execute();
     }
-
     private void sendAlertToBackend(String message, final Double latitude, final Double longitude)
     {
         if(Globals.regid == null || Globals.regid.equals("")){
@@ -151,7 +140,7 @@ public class CustomMapFragment extends com.google.android.gms.maps.SupportMapFra
                             .setRootUrl("https://crafty-shelter-88814.appspot.com/_ah/api/");
 
                     SubmitAlert as = builder.build();
-                    as.addAlert(params[0],latitude,longitude).execute();
+                    as.addAlert(params[0],latitude,longitude,Globals.regid,params[0]).execute();
                     msg = "Alerta enviada";
                 }
                 catch (IOException ex)
@@ -167,5 +156,15 @@ public class CustomMapFragment extends com.google.android.gms.maps.SupportMapFra
                 Toast.makeText(getActivity().getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
             }
         }.execute(message);
+    }
+
+    @Override
+    public void update(Observable observable, Object data) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                updateAlerts();
+            }
+        });
     }
 }

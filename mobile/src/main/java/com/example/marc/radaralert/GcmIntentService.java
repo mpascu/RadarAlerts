@@ -2,13 +2,23 @@ package com.example.marc.radaralert;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.widget.Toast;
 
+import com.example.marc.myapplication.backend.submitAlert.SubmitAlert;
+import com.example.marc.myapplication.backend.submitAlert.model.AlertRecord;
+import com.example.marc.myapplication.backend.submitAlert.model.CollectionResponseAlertRecord;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 
+import java.io.IOException;
+import java.util.Observable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,10 +44,11 @@ public class GcmIntentService extends IntentService {
             if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
                 Logger.getLogger("GCM_RECEIVED").log(Level.INFO, extras.toString());
 
-                showToast(extras.getString("message"));
+                showToast("Notificació del backend: "+extras.getString("message"));
             }
         }
         GcmBroadcastReceiver.completeWakefulIntent(intent);
+        Globals.instance.getAlertsFromBackend();
     }
 
     protected void showToast(final String message) {
