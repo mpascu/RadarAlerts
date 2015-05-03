@@ -30,6 +30,10 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name=".LogInActivity"
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -47,6 +51,15 @@
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
                 <category android:name="com.example.marc.radaralert" />
             </intent-filter>
+        </receiver>
+        <service
+            android:name=".musicService"
+            android:enabled="true" />
+
+        <receiver
+            android:name=".alertAlarmReceptor"
+            android:enabled="true"
+            android:exported="true" >
         </receiver>
         <meta-data
             android:name="com.google.android.gms.version"

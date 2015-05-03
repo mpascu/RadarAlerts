@@ -28,16 +28,17 @@ public class AlertArrayAdapter<T> extends ArrayAdapter{
     private final int layoutResourceId;
     private final String[] data;
     private final String[] descriptions;
-
-    public AlertArrayAdapter(Context context, int resource, String[] values, String[] desciptions) {
+    private final Integer[] tags;
+    public AlertArrayAdapter(Context context, int resource, String[] values, String[] desciptions,Integer[] tags) {
         super(context, resource, values);
         this.context=context;
         this.layoutResourceId=resource;
         this.data=values;
         this.descriptions=desciptions;
+        this.tags=tags;
     }
     @Override
-    public View getView(int position, final View convertView, ViewGroup parent) {
+    public View getView(final int position, final View convertView, ViewGroup parent) {
         View row = convertView;
         AlertHolder holder = null;
 
@@ -62,14 +63,16 @@ public class AlertArrayAdapter<T> extends ArrayAdapter{
         final String secondLine = descriptions[position];
         holder.description.setText(secondLine);
         //holder.imgIcon.setImageResource(weather.icon);
-        ImageButton deleteButton = (ImageButton)row.findViewById(R.id.deleteImageButton);
+        final ImageButton deleteButton = (ImageButton)row.findViewById(R.id.deleteImageButton);
         final View finalRow = row;
+        //finalRow.setTag(0, tags[position]);
+
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //TextView tv = (TextView) convertView.findViewById(R.id.secondLine);
-                final TextView tv=(TextView) finalRow.findViewById(R.id.secondLine);
-                deleteAlert(tv.getText().toString());
+
+                deleteAlert(tags[position]);
                 //System.out.println(tv.getText());
             }
         });
@@ -82,10 +85,10 @@ public class AlertArrayAdapter<T> extends ArrayAdapter{
         TextView description;
     }
 
-    private void deleteAlert(String name){
-        new AsyncTask<String, Void, String>(){
+    private void deleteAlert(int tag){
+        new AsyncTask<Integer, Void, String>(){
             @Override
-            protected String doInBackground(String... params){
+            protected String doInBackground(Integer... params){
                 String msg = "";
                 try{
 
@@ -107,7 +110,7 @@ public class AlertArrayAdapter<T> extends ArrayAdapter{
             protected void onPostExecute(String msg) {
 ///////////////////////////////////
             }
-        }.execute(name);
+        }.execute(tag);
     }
 
 }

@@ -42,10 +42,10 @@ public class AlertEndpoint {
 
     @ApiMethod(name = "addAlert")
     public void addAlert(@Named("alertName") String alert,@Named("latitude") Double latitude,@Named("longitude") Double longitude, @Named("regId") String regId,@Named("description") String description) {
-        if (findRecord(alert) != null) {
+        /**if (findRecord(alert) != null) {
             log.info("Device " + alert + " already registered, skipping register");
             return;
-        }
+        }*/
         AlertRecord record = new AlertRecord();
         record.setAlertId(alert);
         record.setLatLng(latitude, longitude);
@@ -59,7 +59,7 @@ public class AlertEndpoint {
         }
     }
     @ApiMethod(name = "deleteAlert")
-    public void deleteAlert(@Named("alertName") String alert) {
+    public void deleteAlert(@Named("alertName") int alert) {
         if (findRecord(alert) != null) {
             ofy().delete().entity(findRecord(alert));
             try {
@@ -119,8 +119,8 @@ public class AlertEndpoint {
             }
         }
     }
-    private AlertRecord findRecord(String alertId) {
-        return ofy().load().type(AlertRecord.class).filter("alertId", alertId).first().now();
+    private AlertRecord findRecord(int tag) {
+        return ofy().load().type(AlertRecord.class).filter("tag", tag).first().now();
     }
 
 }

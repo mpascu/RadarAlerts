@@ -24,6 +24,8 @@ import java.util.Observer;
 public class Globals extends Observable{
 
     public static Globals instance = new Globals();
+    public static boolean notificationsActivated;
+
     private Globals (){
 
     }

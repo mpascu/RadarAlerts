@@ -15,7 +15,8 @@
             <param-name>services</param-name>
             <param-value>com.example.Marc.myapplication.backend.RegistrationEndpoint,
                 com.example.Marc.myapplication.backend.MessagingEndpoint,
-                com.example.Marc.myapplication.backend.AlertEndpoint
+                com.example.Marc.myapplication.backend.AlertEndpoint,
+                com.example.Marc.myapplication.backend.LogInEndpoint
             </param-value>
         </init-param>
     </servlet>

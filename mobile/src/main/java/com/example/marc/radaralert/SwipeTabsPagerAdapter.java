@@ -12,7 +12,7 @@ import java.util.Observable;
 * Created by Marc on 01/03/2015.
 */
 public class SwipeTabsPagerAdapter extends FragmentPagerAdapter {
-    final int PAGE_COUNT = 4;
+    final int PAGE_COUNT = 2;
     Observable observable;
     public SwipeTabsPagerAdapter(FragmentManager supportFragmentManager, Observable listener) {
         super(supportFragmentManager);
@@ -27,11 +27,10 @@ public class SwipeTabsPagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch (position){
             case 0:
-                return "Map";
+                return "Mapa";
             case 1:
-                return "My alerts";
-            case 2:
-                return "Options";
+                return "Les meves alertes";
+
         }
         return "Default";
 

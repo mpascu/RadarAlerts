@@ -13,6 +13,7 @@ public class OfyService {
     static {
         ObjectifyService.register(RegistrationRecord.class);
         ObjectifyService.register(AlertRecord.class);
+        ObjectifyService.register(UserRecord.class);
     }
 
     public static Objectify ofy() {

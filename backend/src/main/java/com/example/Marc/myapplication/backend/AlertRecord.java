@@ -9,11 +9,16 @@ import com.googlecode.objectify.annotation.Index;
  */
 @Entity
 public class AlertRecord {
-
+    private static int count=0;
     @Id
     Long id;
 
+    public int getTag() {
+        return tag;
+    }
+
     @Index
+    private int tag;
     private String alertId;
     private Double lat;
     private Double lng;
@@ -21,7 +26,8 @@ public class AlertRecord {
     private String description;
 
     public AlertRecord() {
-
+        tag=count;
+        count++;
     }
 
     public String getAlertId() {

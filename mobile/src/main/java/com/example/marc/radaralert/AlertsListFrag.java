@@ -32,13 +32,14 @@ import java.util.TimerTask;
 public class AlertsListFrag extends android.support.v4.app.ListFragment implements Observer {
     private String[] titols ={};
     private String[] desciptions ={};
+    private Integer[] tags ={};
     private AlertArrayAdapter<String> adapter;
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         adapter = new AlertArrayAdapter<String>(getActivity(),
-                R.layout.alert_list_item, titols, desciptions);
+                R.layout.alert_list_item, titols, desciptions,tags);
         setListAdapter(adapter);
         Globals.instance.addObserver(this);
     }
@@ -55,12 +56,14 @@ public class AlertsListFrag extends android.support.v4.app.ListFragment implemen
             }
             titols=new String[count];
             desciptions=new String[count];
+            tags=new Integer[count];
             for (AlertRecord alert: Globals.instance.getAlertList()){
                 //System.out.println("aaaaaaaaaaaaaa");
                 if(alert.getRegId().equals(Globals.regid)){
                     //System.out.println("bbbbbbbbbbb");
-                    titols[x]="Radar";
+                    titols[x]=alert.getAlertId();
                     desciptions[x]=alert.getDescription();
+                    tags[x]=alert.getTag();
                     x++;
 
                 }
@@ -68,7 +71,7 @@ public class AlertsListFrag extends android.support.v4.app.ListFragment implemen
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    adapter = new AlertArrayAdapter<String>(getActivity(),R.layout.alert_list_item, titols, desciptions);
+                    adapter = new AlertArrayAdapter<String>(getActivity(),R.layout.alert_list_item, titols, desciptions,tags);
                     setListAdapter(adapter);
                 }
             });
