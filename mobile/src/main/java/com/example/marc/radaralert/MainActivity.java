@@ -53,8 +53,8 @@ public class MainActivity extends ActionBarActivity {
         fragmentManager = getSupportFragmentManager();
         listener = new ObservableSwitchChangeListener();
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
-        viewPager.setAdapter(new SwipeTabsPagerAdapter(getSupportFragmentManager(), listener));
-        Globals.instance.getAlertsFromBackend();
+        viewPager.setAdapter(new SwipeTabsPagerAdapter(getSupportFragmentManager(), context, listener));
+        Globals.instance.getAlertsFromBackend(context);
     }
 
 
@@ -64,6 +64,7 @@ public class MainActivity extends ActionBarActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         final MenuItem toggleSwitch = menu.findItem(R.id.myswitch);
         Switch connectionSwitch = (Switch) toggleSwitch.getActionView().findViewById(R.id.connectionSwitch);
+        connectionSwitch.setChecked(Globals.notificationsActivated);
         connectionSwitch.setOnCheckedChangeListener(listener);
         return true;
     }

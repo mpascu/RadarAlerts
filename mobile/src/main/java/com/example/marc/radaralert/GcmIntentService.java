@@ -44,11 +44,11 @@ public class GcmIntentService extends IntentService {
             if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
                 Logger.getLogger("GCM_RECEIVED").log(Level.INFO, extras.toString());
 
-                showToast("Notificació del backend: "+extras.getString("message"));
+                showToast(getString(R.string.backend_notification)+extras.getString("message"));
             }
         }
         GcmBroadcastReceiver.completeWakefulIntent(intent);
-        Globals.instance.getAlertsFromBackend();
+        Globals.instance.getAlertsFromBackend(getApplicationContext());
     }
 
     protected void showToast(final String message) {

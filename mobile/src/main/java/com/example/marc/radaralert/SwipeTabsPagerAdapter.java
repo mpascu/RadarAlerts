@@ -2,6 +2,9 @@ package com.example.marc.radaralert;
 
 
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.res.Resources;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -14,9 +17,11 @@ import java.util.Observable;
 public class SwipeTabsPagerAdapter extends FragmentPagerAdapter {
     final int PAGE_COUNT = 2;
     Observable observable;
-    public SwipeTabsPagerAdapter(FragmentManager supportFragmentManager, Observable listener) {
+    Context context;
+    public SwipeTabsPagerAdapter(FragmentManager supportFragmentManager, Context context, Observable listener) {
         super(supportFragmentManager);
         this.observable = listener;
+        this.context = context;
     }
 
     @Override
@@ -27,12 +32,12 @@ public class SwipeTabsPagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch (position){
             case 0:
-                return "Mapa";
+                return context.getResources().getString(R.string.map);
             case 1:
-                return "Les meves alertes";
+                return context.getResources().getString(R.string.my_alerts);
 
         }
-        return "Default";
+        return context.getResources().getString(R.string.default_text);
 
     }
     @Override

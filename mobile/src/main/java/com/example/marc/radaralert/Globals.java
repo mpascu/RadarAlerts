@@ -24,7 +24,7 @@ import java.util.Observer;
 public class Globals extends Observable{
 
     public static Globals instance = new Globals();
-    public static boolean notificationsActivated;
+    public static boolean notificationsActivated = true;
 
     private Globals (){
 
@@ -60,11 +60,11 @@ public class Globals extends Observable{
         }
         catch (PackageManager.NameNotFoundException e)
         {
-            throw new RuntimeException("Could not get package name: " + e);
+            throw new RuntimeException(context.getString(R.string.could_not_get_package_name) + e);
         }
     }
 
-    public void getAlertsFromBackend(){
+    public void getAlertsFromBackend(final Context context){
         if(Globals.regid == null || Globals.regid.equals("")){
             //Toast.makeText(getApplicationContext(), "You must register first", Toast.LENGTH_LONG).show();
             return;
@@ -81,7 +81,7 @@ public class Globals extends Observable{
                     SubmitAlert as = builder.build();
                     CollectionResponseAlertRecord crar=as.listAlerts(100).execute();
                     setAlertList(crar.getItems());
-                    msg = "Alertes rebudes correctament";
+                    msg = context.getString(R.string.alerts_recived);
                 }
                 catch (IOException ex)
                 {
@@ -96,7 +96,7 @@ public class Globals extends Observable{
 
                 }
                 else{
-                    msg = "El servidor no ha retornat cap alerta";
+                    msg = context.getString(R.string.non_alert_recived);
                 }
                 //Toast.makeText(getApp, msg, Toast.LENGTH_SHORT).show();
             }

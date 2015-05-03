@@ -3,10 +3,20 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Preferencies</string>
-    <string name="title_activity_maps">Mapa</string>
-    <string name="title_activity_aaaaaa">Mapa</string>
+    <string name="map">Mapa</string>
+    <string name="my_alerts">Les meves alertes</string>
+    <string name="default_text">Default</string>
     <string name="login">Login</string>
     <string name="username">Usuari</string>
     <string name="password">Contrasenya</string>
     <string name="register">Registrar nou usuari</string>
+    <string name="register_first">You must register first</string>
+    <string name="registration_not_found">Registration not found.</string>
+    <string name="app_version_changed">App version changed.</string>
+    <string name="saving_regid">Saving regId on app version </string>
+    <string name="device_register">Device registered, registration ID=</string>
+    <string name="could_not_get_package_name">Could not get package name: </string>
+    <string name="alerts_recived">Alertes rebudes correctament</string>
+    <string name="non_alert_recived">El servidor no ha retornat cap alerta</string>
+    <string name="backend_notification">Notificació del backend: </string>
 </resources>

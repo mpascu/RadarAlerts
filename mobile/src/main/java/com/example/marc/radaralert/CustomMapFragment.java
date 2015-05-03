@@ -26,6 +26,7 @@ import com.example.marc.myapplication.backend.submitAlert.model.AlertRecord;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -42,6 +43,7 @@ public class CustomMapFragment extends com.google.android.gms.maps.SupportMapFra
     private static final long MIN_TIME = 400;
     private static final float MIN_DISTANCE = 1000;
     private GoogleMap googleMap;
+    private UiSettings uiSettings;
     private LocationManager locationManager;
 
     @Override
@@ -54,6 +56,8 @@ public class CustomMapFragment extends com.google.android.gms.maps.SupportMapFra
         googleMap = getMap();
         googleMap.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
         googleMap.setMyLocationEnabled(true);
+        uiSettings = googleMap.getUiSettings();
+        uiSettings.setZoomControlsEnabled(true);
         googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
 
             @Override

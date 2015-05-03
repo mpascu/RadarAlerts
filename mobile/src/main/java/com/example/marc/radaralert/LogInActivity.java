@@ -99,7 +99,7 @@ public class LogInActivity extends ActionBarActivity {
 
     public void logIn() {
         if (Globals.regid == null || Globals.regid.equals("")) {
-            Toast.makeText(this, "You must register first", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.register_first), Toast.LENGTH_LONG).show();
             return;
         }
         new AsyncTask<String, Void, String>() {
@@ -135,7 +135,7 @@ public class LogInActivity extends ActionBarActivity {
 
     private void register() {
         if (Globals.regid == null || Globals.regid.equals("")) {
-            Toast.makeText(this, "You must register first", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.register_first), Toast.LENGTH_LONG).show();
             return;
         }
         new AsyncTask<String, Void, String>() {
@@ -168,7 +168,7 @@ public class LogInActivity extends ActionBarActivity {
         final SharedPreferences prefs = getGcmPreferences(context);
         String registrationId = prefs.getString(Globals.PREFS_PROPERTY_REG_ID, "");
         if (registrationId == null || registrationId.equals("")) {
-            Log.i(Globals.TAG, "Registration not found.");
+            Log.i(Globals.TAG, getString(R.string.registration_not_found));
             return "";
         }
         // Check if app was updated; if so, it must clear the registration ID
@@ -177,7 +177,7 @@ public class LogInActivity extends ActionBarActivity {
         int registeredVersion = prefs.getInt(Globals.PROPERTY_APP_VERSION, Integer.MIN_VALUE);
         int currentVersion = getAppVersion(context);
         if (registeredVersion != currentVersion) {
-            Log.i(Globals.TAG, "App version changed.");
+            Log.i(Globals.TAG, getString(R.string.app_version_changed));
             return "";
         }
         return registrationId;
@@ -186,7 +186,7 @@ public class LogInActivity extends ActionBarActivity {
     private void storeRegistrationId(Context context, String regId) {
         final SharedPreferences prefs = getGcmPreferences(context);
         int appVersion = getAppVersion(context);
-        Log.i(Globals.TAG, "Saving regId on app version " + appVersion);
+        Log.i(Globals.TAG, getString(R.string.saving_regid) + appVersion);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(Globals.PREFS_PROPERTY_REG_ID, regId);
         editor.putInt(Globals.PROPERTY_APP_VERSION, appVersion);
@@ -210,7 +210,7 @@ public class LogInActivity extends ActionBarActivity {
                         gcm = GoogleCloudMessaging.getInstance(context);
                     }
                     String regId = gcm.register(Globals.GCM_SENDER_ID);
-                    msg = "Device registered, registration ID=" + regId;
+                    msg = getString(R.string.device_register) + regId;
 
                     // You should send the registration ID to your server over HTTP,
                     // so it can use GCM/HTTP or CCS to send messages to your app.
@@ -243,7 +243,7 @@ public class LogInActivity extends ActionBarActivity {
             return packageInfo.versionCode;
         } catch (PackageManager.NameNotFoundException e) {
             // should never happen
-            throw new RuntimeException("Could not get package name: " + e);
+            throw new RuntimeException(context.getString(R.string.could_not_get_package_name) + e);
         }
     }
 
