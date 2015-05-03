@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">RadarAlert</string>
+    <string name="action_settings">Preferencias</string>
+    <string name="alerts_recived">Alertas recividas correctamente</string>
+    <string name="app_version_changed">La version de la aplicacion ha canviado</string>
+    <string name="backend_notification">Notificacion del backend:</string>
+    <string name="could_not_get_package_name">No se ha encontrado el nombre del paquete</string>
+    <string name="default_text">Por defecto</string>
+    <string name="device_register">Dispositivo registrado, ID del registro=</string>
+    <string name="hello_world">Hola mundo!</string>
+    <string name="login">Login</string>
+    <string name="map">Mapa</string>
+    <string name="my_alerts">Mis alertas</string>
+    <string name="non_alert_recived">El servidor no ha devuelto ninguna alerta</string>
+    <string name="password">Contraseña</string>
+    <string name="register">Registrar nuevo usuario</string>
+    <string name="register_first">Registrate primero</string>
+    <string name="registration_not_found">Registro no encontrado.</string>
+    <string name="saving_regid">Guardando el regId para la verion de la app</string>
+    <string name="username">Usuario</string>
+</resources>

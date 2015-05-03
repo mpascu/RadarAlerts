@@ -2,21 +2,21 @@
     <string name="app_name">RadarAlert</string>
 
     <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Preferencies</string>
-    <string name="map">Mapa</string>
-    <string name="my_alerts">Les meves alertes</string>
+    <string name="action_settings">Settings</string>
+    <string name="map">Map</string>
+    <string name="my_alerts">My alerts</string>
     <string name="default_text">Default</string>
     <string name="login">Login</string>
-    <string name="username">Usuari</string>
-    <string name="password">Contrasenya</string>
-    <string name="register">Registrar nou usuari</string>
+    <string name="username">User</string>
+    <string name="password">Password</string>
+    <string name="register">Register new user</string>
     <string name="register_first">You must register first</string>
     <string name="registration_not_found">Registration not found.</string>
     <string name="app_version_changed">App version changed.</string>
     <string name="saving_regid">Saving regId on app version </string>
     <string name="device_register">Device registered, registration ID=</string>
     <string name="could_not_get_package_name">Could not get package name: </string>
-    <string name="alerts_recived">Alertes rebudes correctament</string>
-    <string name="non_alert_recived">El servidor no ha retornat cap alerta</string>
-    <string name="backend_notification">Notificació del backend: </string>
+    <string name="alerts_recived">Alerts recived succesfully</string>
+    <string name="non_alert_recived">The server did not return any alert</string>
+    <string name="backend_notification">Backend notification:</string>
 </resources>
