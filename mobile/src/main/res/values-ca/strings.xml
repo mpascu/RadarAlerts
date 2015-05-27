@@ -5,7 +5,7 @@
     <string name="alerts_recived">Alertes rebudes correctament</string>
     <string name="app_version_changed">La versió de la aplicació ha canviat.</string>
     <string name="backend_notification">Notificació del backend:</string>
-    <string name="could_not_get_package_name">No s'ha pogut trobar el nom del paquet:</string>
+    <string name="could_not_get_package_name">No s\'ha pogut trobar el nom del paquet:</string>
     <string name="default_text">Per defecte</string>
     <string name="device_register">Dispositiu registrat, ID del registre=</string>
     <string name="hello_world">Hola mon!</string>
@@ -15,8 +15,8 @@
     <string name="non_alert_recived">El servidor no ha retornat cap alerta</string>
     <string name="password">Contrasenya</string>
     <string name="register">Registrar nou usuari</string>
-    <string name="register_first">T'has de registrar primer</string>
+    <string name="register_first">T\'has de registrar primer</string>
     <string name="registration_not_found">Registre no trobat.</string>
-    <string name="saving_regid">Guardan't regId per la versió de la app</string>
+    <string name="saving_regid">Guardan\'t regId per la versió de la app</string>
     <string name="username">Usuari</string>
 </resources>
