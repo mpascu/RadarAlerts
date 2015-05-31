@@ -39,6 +39,7 @@ public class AlertArrayAdapter<T> extends ArrayAdapter{
     private final String[] data;
     private final String[] descriptions;
     private final Integer[] tags;
+    private CharSequence[] items;
     public AlertArrayAdapter(Context context, int resource, String[] values, String[] desciptions,Integer[] tags) {
         super(context, resource, values);
         this.context=context;
@@ -89,55 +90,56 @@ public class AlertArrayAdapter<T> extends ArrayAdapter{
             public void onClick(View v) {
 
                 //final CharSequence[] items = {"Foo", "Bar", "Baz"};
-                final CharSequence[] items = getComments(16);
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setTitle("Comentaris");
-                builder.setItems(items, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int item) {
-                        // Do something with the selection
-                    }
-                });
-                builder.setNegativeButton("Enrere", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                showComments(tags[position]);
 
-                    }
-                });
-                builder.setPositiveButton("Afegir comentari", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-                AlertDialog alert = builder.create();
-                alert.show();
             }
         });
         return row;
     }
+    private void showCommentsDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Comentaris");
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                // Do something with the selection
+            }
+        });
+        builder.setNegativeButton("Enrere", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        builder.setPositiveButton("Afegir comentari", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
     static class commentsHolder{
+        public static int count = 0;
         public static String[] comments= new String[100];
 
     }
-    private CharSequence[] getComments(final int i) {
-
-        //final commentsHolder com= new commentsHolder();
+    private void showComments(final int i) {
 
         APIRequestHandler.INSTANCE.makeGetRequest(Globals.URL, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        int count = 0;
 
+                        commentsHolder.count=0;
                         JSONParser jsonParser = new JSONParser();
                         try {
                             JSONArray messages = (JSONArray) jsonParser.parse(response);
                             for (int x = 0; x < messages.size(); x++) {
                                 JSONObject message = (JSONObject) messages.get(x);
-                                System.out.println("id drebut" + Integer.parseInt((String) message.get("alertId")) + "   Id" + i);
                                 if (Integer.parseInt((String) message.get("alertId")) == i) {
-                                    commentsHolder.comments[count] = (String) message.get("comment");
+                                    commentsHolder.comments[commentsHolder.count] = (String) message.get("comment");
                                     System.out.print((String) message.get("comment"));
-                                    count++;
+                                    commentsHolder.count++;
                                 }
                             }
 
@@ -146,8 +148,12 @@ public class AlertArrayAdapter<T> extends ArrayAdapter{
                         } catch (NumberFormatException e) {
                             e.printStackTrace();
                         }
+                        items = new CharSequence[commentsHolder.count];
+                        for (int y=0;y<commentsHolder.count;y++){
+                            items[y]=commentsHolder.comments[y];
+                        }
 
-                        Toast.makeText(context, response, Toast.LENGTH_LONG).show();
+                        showCommentsDialog();
                     }
 
                 },
@@ -157,8 +163,7 @@ public class AlertArrayAdapter<T> extends ArrayAdapter{
                         Toast.makeText(context, error.toString(), Toast.LENGTH_SHORT).show();
                     }
                 });
-        //System.out.print(com.comments);
-        return new CharSequence[]{"Foo", "Bar", "Baz"};
+
 
     }
 
