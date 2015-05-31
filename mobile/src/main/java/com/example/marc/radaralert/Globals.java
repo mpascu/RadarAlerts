@@ -34,7 +34,7 @@ public class Globals extends Observable{
     public static final String GCM_SENDER_ID = "188957038907";
     // id-2210
     // 650116039430
-
+    public static String URL = "http://mptdataserver.duckdns.org:3000/comentarisJSON";
     public static final String PREFS_NAME = "GCM_DEMO";
     public static final String PREFS_PROPERTY_REG_ID = "registration_id";
     public static String regid;

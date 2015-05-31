@@ -20,6 +20,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.example.marc.myapplication.backend.registration.Registration;
 import com.example.marc.myapplication.backend.submitAlert.SubmitAlert;
 import com.example.marc.myapplication.backend.submitAlert.model.AlertRecord;
@@ -55,6 +57,8 @@ public class MainActivity extends ActionBarActivity {
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
         viewPager.setAdapter(new SwipeTabsPagerAdapter(getSupportFragmentManager(), context, listener));
         Globals.instance.getAlertsFromBackend(context);
+        APIRequestHandler.INSTANCE.setQueue(Volley.newRequestQueue(this));
+
     }
 
 

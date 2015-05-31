@@ -1,1 +1,1 @@
-include ':mobile', ':wear', ':backend'
+include ':mobile', ':wear', ':backend', ':json-simple-1.1.1'

@@ -1,9 +1,11 @@
 package com.example.marc.radaralert;
 
 import android.app.ListFragment;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
@@ -61,7 +63,8 @@ public class AlertsListFrag extends android.support.v4.app.ListFragment implemen
                 //System.out.println("aaaaaaaaaaaaaa");
                 if(alert.getRegId().equals(Globals.regid)){
                     //System.out.println("bbbbbbbbbbb");
-                    titols[x]=alert.getAlertId();
+
+                    titols[x]="("+alert.getTag()+") "+alert.getAlertId();
                     desciptions[x]=alert.getDescription();
                     tags[x]=alert.getTag();
                     x++;
@@ -80,10 +83,7 @@ public class AlertsListFrag extends android.support.v4.app.ListFragment implemen
     }
 
 
-    @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
 
-    }
 
 }
 

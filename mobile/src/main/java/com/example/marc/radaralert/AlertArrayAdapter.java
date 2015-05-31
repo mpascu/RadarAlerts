@@ -2,7 +2,9 @@ package com.example.marc.radaralert;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +14,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.example.marc.myapplication.backend.submitAlert.SubmitAlert;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
 
@@ -52,6 +62,7 @@ public class AlertArrayAdapter<T> extends ArrayAdapter{
             holder.description = (TextView)row.findViewById(R.id.secondLine);
 
             row.setTag(holder);
+
         }
         else
         {
@@ -62,10 +73,7 @@ public class AlertArrayAdapter<T> extends ArrayAdapter{
         holder.title.setText(title);
         final String secondLine = descriptions[position];
         holder.description.setText(secondLine);
-        //holder.imgIcon.setImageResource(weather.icon);
         final ImageButton deleteButton = (ImageButton)row.findViewById(R.id.deleteImageButton);
-        final View finalRow = row;
-        //finalRow.setTag(0, tags[position]);
 
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,7 +84,82 @@ public class AlertArrayAdapter<T> extends ArrayAdapter{
                 //System.out.println(tv.getText());
             }
         });
+        row.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //final CharSequence[] items = {"Foo", "Bar", "Baz"};
+                final CharSequence[] items = getComments(16);
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle("Comentaris");
+                builder.setItems(items, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int item) {
+                        // Do something with the selection
+                    }
+                });
+                builder.setNegativeButton("Enrere", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                builder.setPositiveButton("Afegir comentari", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
+        });
         return row;
+    }
+    static class commentsHolder{
+        public static String[] comments= new String[100];
+
+    }
+    private CharSequence[] getComments(final int i) {
+
+        //final commentsHolder com= new commentsHolder();
+
+        APIRequestHandler.INSTANCE.makeGetRequest(Globals.URL, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        int count = 0;
+
+                        JSONParser jsonParser = new JSONParser();
+                        try {
+                            JSONArray messages = (JSONArray) jsonParser.parse(response);
+                            for (int x = 0; x < messages.size(); x++) {
+                                JSONObject message = (JSONObject) messages.get(x);
+                                System.out.println("id drebut" + Integer.parseInt((String) message.get("alertId")) + "   Id" + i);
+                                if (Integer.parseInt((String) message.get("alertId")) == i) {
+                                    commentsHolder.comments[count] = (String) message.get("comment");
+                                    System.out.print((String) message.get("comment"));
+                                    count++;
+                                }
+                            }
+
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        } catch (NumberFormatException e) {
+                            e.printStackTrace();
+                        }
+
+                        Toast.makeText(context, response, Toast.LENGTH_LONG).show();
+                    }
+
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(context, error.toString(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+        //System.out.print(com.comments);
+        return new CharSequence[]{"Foo", "Bar", "Baz"};
+
     }
 
     static class AlertHolder
