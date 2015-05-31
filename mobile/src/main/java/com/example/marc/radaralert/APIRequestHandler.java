@@ -3,6 +3,7 @@ package com.example.marc.radaralert;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -30,13 +31,25 @@ public class APIRequestHandler {
         queue.add(stringRequest);
     }
 
-    public void makePostRequest(String serverURL, final String id, final String description, Response.Listener<String> responseListener, Response.ErrorListener errorListener) {
+    public void makePostRequest(String serverURL, final Integer alertId, final String comment) {
+        Response.Listener responseListener = new Response.Listener() {
+            @Override
+            public void onResponse(Object response) {
+
+            }
+        };
+        Response.ErrorListener errorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        };
         StringRequest postRequest = new StringRequest(Request.Method.POST, serverURL, responseListener, errorListener ) {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("id", id);
-                params.put("description", description);
+                params.put("alertId", alertId.toString());
+                params.put("comment", comment);
                 return params;
             }
         };

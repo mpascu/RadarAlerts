@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -96,7 +97,7 @@ public class AlertArrayAdapter<T> extends ArrayAdapter{
         });
         return row;
     }
-    private void showCommentsDialog(){
+    private void showCommentsDialog(final int alertId){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Comentaris");
         builder.setItems(items, new DialogInterface.OnClickListener() {
@@ -113,6 +114,20 @@ public class AlertArrayAdapter<T> extends ArrayAdapter{
         builder.setPositiveButton("Afegir comentari", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                final EditText input = new EditText(context);
+                new AlertDialog.Builder(context)
+                        .setTitle("Afegir termometre")
+                        .setMessage("Introdueix el nom del termometre")
+                        .setView(input)
+                        .setPositiveButton("Afegir", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                APIRequestHandler.INSTANCE.makePostRequest(Globals.URL+"comentaris",alertId,input.getText().toString());
+                            }
+                        }).setNegativeButton("Cancel.lar", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        // Do nothing.
+                    }
+                }).show();
 
             }
         });
@@ -126,7 +141,7 @@ public class AlertArrayAdapter<T> extends ArrayAdapter{
     }
     private void showComments(final int i) {
 
-        APIRequestHandler.INSTANCE.makeGetRequest(Globals.URL, new Response.Listener<String>() {
+        APIRequestHandler.INSTANCE.makeGetRequest(Globals.URL+"comentarisJSON", new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
 
@@ -153,7 +168,7 @@ public class AlertArrayAdapter<T> extends ArrayAdapter{
                             items[y]=commentsHolder.comments[y];
                         }
 
-                        showCommentsDialog();
+                        showCommentsDialog(i);
                     }
 
                 },
