@@ -16,6 +16,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.volley.Response;
+import com.android.volley.toolbox.Volley;
 import com.example.marc.myapplication.backend.loginApi.LoginApi;
 import com.example.marc.myapplication.backend.loginApi.model.Result;
 import com.example.marc.myapplication.backend.registration.Registration;
@@ -23,6 +25,11 @@ import com.example.marc.myapplication.backend.submitAlert.SubmitAlert;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -59,6 +66,7 @@ public class LogInActivity extends ActionBarActivity {
 
         Button login = (Button) findViewById(R.id.loginButton);
         Button register = (Button) findViewById(R.id.registerButton);
+        APIRequestHandler.INSTANCE.setQueue(Volley.newRequestQueue(this));
 
         login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,8 +134,32 @@ public class LogInActivity extends ActionBarActivity {
                     Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
                 }
                 else{
-                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                    startActivity(i);
+                    APIRequestHandler.INSTANCE.makeLoginRequest(Globals.URL + "authenticate", usernameText.getText().toString(), passwordText.getText().toString(), new Response.Listener() {
+                        @Override
+                        public void onResponse(Object response) {
+                            System.out.println(response.toString());
+                            JSONParser jsonParser = new JSONParser();
+                            try {
+                                JSONObject messages = (JSONObject) jsonParser.parse(response.toString());
+
+
+                                    if ((Boolean)messages.get("type")) {
+                                        Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                                        startActivity(i);
+                                    }
+                                    else{
+                                        Toast.makeText(getApplicationContext(), "Login incorrecte", Toast.LENGTH_SHORT).show();
+                                    }
+
+
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+
+
+                        }
+                    });
+
                 }
             }
         }.execute();
@@ -157,8 +189,29 @@ public class LogInActivity extends ActionBarActivity {
             }
 
             @Override
-            protected void onPostExecute(String msg) {
-                Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+            protected void onPostExecute(final String msg) {
+                APIRequestHandler.INSTANCE.makeLoginRequest(Globals.URL + "signin", usernameText.getText().toString(), passwordText.getText().toString(), new Response.Listener() {
+                    @Override
+                    public void onResponse(Object response) {
+                        System.out.println(response.toString());
+                        JSONParser jsonParser = new JSONParser();
+                        try {
+                            JSONObject messages = (JSONObject) jsonParser.parse(response.toString());
+
+
+                            if ((Boolean) messages.get("type")) {
+                                Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+                                Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                                startActivity(i);
+                            } else {
+                                Toast.makeText(getApplicationContext(), "Registre incorrecte", Toast.LENGTH_SHORT).show();
+                            }
+
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
             }
         }.execute();
     }

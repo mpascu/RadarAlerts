@@ -55,13 +55,19 @@ public class APIRequestHandler {
         };
         queue.add(postRequest);
     }
-    public void makePutRequest(String serverURL, final String id, final String description, Response.Listener<String> responseListener, Response.ErrorListener errorListener) {
-        StringRequest postRequest = new StringRequest(Request.Method.PUT, serverURL, responseListener, errorListener) {
+    public void makeLoginRequest(String serverURL, final String username, final String password, Response.Listener responseListener) {
+        Response.ErrorListener errorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        };
+        StringRequest postRequest = new StringRequest(Request.Method.POST, serverURL, responseListener, errorListener ) {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("id", id);
-                params.put("description", description);
+                params.put("username", username);
+                params.put("password", password);
                 return params;
             }
         };

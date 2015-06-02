@@ -53,11 +53,10 @@ public class MainActivity extends ActionBarActivity {
 
         setContentView(R.layout.activity_main);
         fragmentManager = getSupportFragmentManager();
+        Globals.instance.getAlertsFromBackend(context);
         listener = new ObservableSwitchChangeListener();
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
         viewPager.setAdapter(new SwipeTabsPagerAdapter(getSupportFragmentManager(), context, listener));
-        Globals.instance.getAlertsFromBackend(context);
-        APIRequestHandler.INSTANCE.setQueue(Volley.newRequestQueue(this));
 
     }
 

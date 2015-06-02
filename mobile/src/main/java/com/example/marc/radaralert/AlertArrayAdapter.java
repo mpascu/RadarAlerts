@@ -116,8 +116,8 @@ public class AlertArrayAdapter<T> extends ArrayAdapter{
             public void onClick(DialogInterface dialog, int which) {
                 final EditText input = new EditText(context);
                 new AlertDialog.Builder(context)
-                        .setTitle("Afegir termometre")
-                        .setMessage("Introdueix el nom del termometre")
+                        .setTitle("Afegir comentari")
+                        .setMessage("Introdueix el comentari:")
                         .setView(input)
                         .setPositiveButton("Afegir", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
